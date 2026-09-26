@@ -1,97 +1,63 @@
-# qwen3-asr
+# Qwen3-ASR
 
-![Python](https://img.shields.io/badge/Python-3.8+-blue)
-![License](https://img.shields.io/badge/License-MIT-green)
-![HuggingFace](https://img.shields.io/badge/HuggingFace-Qwen3--ASR-yellow)
+**Demo — transcribe audio to text in Colab (Qwen3-ASR).**
 
-A lightweight wrapper for [Qwen3-ASR](https://huggingface.co/Qwen/Qwen3-ASR-0.6B), providing a simple pipeline to transcribe audio files to text using Qwen's automatic speech recognition models. Runs in Google Colab with GPU acceleration.
+Not a client case study. A short pipeline: audio in → 16 kHz mono → model → `transcription.txt`. GPU (T4) recommended.
 
-## Use Cases
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/47096/qwen3-asr/blob/main/qwen3-asr.ipynb)
 
-- **Video subtitling** — Auto-generate subtitles for YouTube, courses, and marketing videos
-- **Call centre analytics** — Transcribe customer calls for sentiment analysis and QA
-- **Meeting minutes** — Auto-generate searchable summaries from meeting recordings
-- **Podcast show notes** — Convert episodes to written content and timestamps
-- **Voice-to-text integration** — Embed speech-to-text into apps and automation pipelines
+---
 
-## Quick Start
+## Run it
 
-<a href="https://colab.research.google.com/github/47096/qwen3-asr/blob/main/qwen3-asr.ipynb" target="_blank"><img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"></a>
+1. Click **Open In Colab** · **Runtime → T4 GPU**  
+2. Run all cells (English sample loads by default)  
+3. Swap in your file, or use `sample-voice/chinese-sample-voice.wav`  
 
-1. Open the notebook in Colab
-2. Run all cells
-3. Upload your own audio file, or use the included sample voice files (English/Chinese)
-4. Get your transcription
+**Privacy:** audio is processed in Colab / Hugging Face — don’t upload confidential calls.
 
-## What It Does
+## Five commercial use cases
 
-Takes any audio file and converts spoken language into text transcription:
+| # | Use case | Who cares |
+|---|----------|-----------|
+| 1 | **Subtitle drafts** | Marketing / video |
+| 2 | **Call / support transcripts** | CX analytics |
+| 3 | **Meeting minutes** | Ops / exec assistants |
+| 4 | **Podcast → show notes** | Media |
+| 5 | **Voice → searchable text** | Knowledge / CRM |
 
-```mermaid
-graph LR
-    A[🎤 Audio file] --> B[🔄 Resample to 16kHz mono]
-    B --> C[🤖 Qwen3-ASR transcription]
-    C --> D[📝 Text output]
+## Five personal use cases
+
+| # | Use case |
+|---|----------|
+| 1 | Lecture / interview notes |
+| 2 | Podcast bookmarking |
+| 3 | Language practice (listen + read) |
+| 4 | Accessibility: speech → text |
+| 5 | Archive voice memos as text |
+
+## What it does
+
+```text
+Audio file → resample 16 kHz mono → Qwen3-ASR → text file
 ```
 
-## Performance
-
-Estimated transcription times on Google Colab T4 GPU (actual results may vary):
-
-| Model | Audio Duration | Transcription Time | Device |
-|-------|---------------|-------------------|--------|
-| 0.6B  | 10 seconds    | ~2-4 seconds       | T4 GPU |
-| 0.6B  | 1 minute      | ~8-15 seconds      | T4 GPU |
-| 0.6B  | 10 minutes    | ~60-90 seconds     | T4 GPU |
-| 1.7B  | 1 minute      | ~15-25 seconds     | T4 GPU |
-
-Note: CPU transcription is significantly slower (5-10x). Performance depends on GPU type, audio length, and content complexity.
-
-## Model Options
-
-| Model | Size | Best For |
+| Model | Size | Best for |
 |-------|------|----------|
-| `Qwen/Qwen3-ASR-0.6B` | 0.6B params | Fast inference, lower VRAM |
-| `Qwen/Qwen3-ASR-1.7B` | 1.7B params | Higher accuracy, more VRAM |
+| `Qwen/Qwen3-ASR-0.6B` | 0.6B | Fast, Colab T4 |
+| `Qwen/Qwen3-ASR-1.7B` | 1.7B | More accuracy / VRAM |
 
-The notebook defaults to 0.6B. Change `model_name` in Block 4 to switch.
+Optional: `return_time_stamps=True` for word timings.
 
-## Requirements
+## Repo
 
-- Google Colab (free tier works)
-- GPU runtime recommended (`Runtime → Change runtime type → T4 GPU`)
+| Path | Role |
+|------|------|
+| `qwen3-asr.ipynb` | Full Colab walkthrough |
+| `sample-voice/*.wav` | English / Chinese samples |
 
-Python dependencies (installed automatically in Colab):
+**Stack:** `qwen-asr` · `librosa` · `soundfile` · Colab GPU
 
-```
-qwen-asr
-librosa
-soundfile
-```
+---
 
-## How It Works
-
-1. **Audio loading** — Uses `librosa` to resample any input audio to 16kHz mono WAV (model requirement)
-2. **Model loading** — Loads Qwen3-ASR with bfloat16 precision on GPU (float32 on CPU)
-3. **Transcription** — Runs `model.transcribe()` with automatic language detection
-4. **Output** — Returns transcribed text and saves it to `transcription.txt`
-
-## Key Details
-
-- **Language detection** — Pass `language=None` for automatic detection, or specify a language code
-- **Time stamps** — Set `return_time_stamps=True` in `transcribe()` for word-level timing
-- **CPU fallback** — Works on CPU with float32, but significantly slower
-- **Output format** — Results returned as a list; access text via `results[0].text`
-
-## Limitations
-
-- Requires Google Colab or a GPU environment for reasonable speed
-- 0.6B model may struggle with heavy accents or background noise
-- Audio must be resampled to 16kHz mono before transcription
-- No streaming — full audio file required upfront
-
-## License
-
-This project is licensed under the [MIT License](LICENSE).
-
-The Qwen3-ASR model weights are licensed separately — check the [Qwen3 model license](https://huggingface.co/Qwen/Qwen3-ASR-0.6B) for usage terms.
+*Speech demos: [`lux-tts`](https://github.com/47096/lux-tts) (clone) · [`qwen3-tts-voice-clone`](https://github.com/47096/qwen3-tts-voice-clone) · products: [`mimo-reader`](https://github.com/47096/mimo-reader) · [datafying](https://datafying.co/)*
